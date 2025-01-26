@@ -42,7 +42,8 @@ public class SecurityConfiguration {
                 .antMatchers(HttpMethod.PUT, "/categories/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/categories/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST, "/orders/**").hasAnyRole("ADMIN", "USER")
-                .antMatchers("/users/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/user/address/**").hasAnyRole("USER", "ADMIN")
+
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

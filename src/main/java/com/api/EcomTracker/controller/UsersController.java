@@ -1,5 +1,8 @@
 package com.api.EcomTracker.controller;
 
+import com.api.EcomTracker.domain.address.Address;
+import com.api.EcomTracker.domain.address.AddressService;
+import com.api.EcomTracker.domain.order.UserInfoDTO;
 import com.api.EcomTracker.domain.users.dto.UserRegisterDTO;
 import com.api.EcomTracker.domain.users.dto.UserRegisterAdminDTO;
 import com.api.EcomTracker.domain.users.Users;
@@ -13,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -32,6 +36,9 @@ public class UsersController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AddressService addressService;
 
     @PostMapping("/register")
     @Transactional
@@ -105,4 +112,22 @@ public class UsersController {
                     ));
         }
     }
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyDetails() {
+        try {
+            Users user = (Users) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            ResponseEntity<?> addressResponse = addressService.getAddress();
+            Address address;
+            if (addressResponse.getStatusCode().is2xxSuccessful()) {
+                address = (Address) addressResponse.getBody();
+            } else {
+                address = new Address(null, null, null, null, null, null, null, null, null);
+            }
+            return ResponseEntity.ok(new UserInfoDTO(user, address));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                 .body(new ErrorResponse("Failed to retrieve user details", e.getMessage()));
+        }
+    }
 }
+

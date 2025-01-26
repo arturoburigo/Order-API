@@ -10,7 +10,7 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 
 @Configuration
 public class SqsConfig {
-    Dotenv dotenv = Dotenv.configure().directory("/app").load();
+    Dotenv dotenv = Dotenv.configure().load();
 
 
     String accessKeyId = dotenv.get("AWS_ACCESS_KEY_ID");

@@ -25,7 +25,7 @@ public class Users implements UserDetails {
     private String username;
     private String password;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "role_id", nullable = false)
     private Roles role;
 
